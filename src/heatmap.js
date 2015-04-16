@@ -188,10 +188,10 @@ dc.heatMap = function (parent, chartGroup) {
             .attr('class', 'heatmap')
             .attr('transform', 'translate(' + _chart.margins().left + ',' + _chart.margins().top + ')');
         _chartBody.append('g')
-            .attr('class', 'axis x')
+            .attr('class', 'cols axis')
             .attr('transform', 'translate(0,' + _chart.effectiveHeight() + ')');
         _chartBody.append('g')
-            .attr('class', 'axis y');
+            .attr('class', 'rows axis');
         _colScale.rangeRoundBands([0, _chart.effectiveWidth()]);
         _rowScale.rangeRoundBands([_chart.effectiveHeight(), 0]);
 
@@ -214,23 +214,29 @@ dc.heatMap = function (parent, chartGroup) {
         // Update axis
         _colAxis.scale(cols)
             .tickFormat(_chart.colsLabel());
-        dc.transition(_chartBody.select('g.axis.x'), _chart.transitionDuration())
-            .call(_colAxis)
-            .each('end', function () {
+        var _colAxisTransition = dc.transition(_chartBody.select('g.cols.axis'), _chart.transitionDuration())
+            .call(_colAxis);
+        _rowAxis.scale(rows)
+            .tickFormat(_chart.rowsLabel());
+        var _rowAxisTransition = dc.transition(_chartBody.select('g.rows.axis'), _chart.transitionDuration())
+            .call(_rowAxis);
+        // We need the clicks added after the transition.  Unfortunately, this is handled differently
+        // for selection/transition
+        if (_colAxisTransition.duration || _rowAxisTransition.duration) {
+            _colAxisTransition.each('end', function () {
                 d3.select(this)
                     .selectAll('g')
                     .on('click', _chart.xAxisOnClick());
             });
-
-        _rowAxis.scale(rows)
-            .tickFormat(_chart.rowsLabel());
-        dc.transition(_chartBody.select('g.axis.y'), _chart.transitionDuration())
-            .call(_rowAxis)
-            .each('end', function () {
+            _rowAxisTransition.each('end', function () {
                 d3.select(this)
                     .selectAll('g')
                     .on('click', _chart.yAxisOnClick());
             });
+        } else {
+            _colAxisTransition.selectAll('g').on('click', _chart.xAxisOnClick());
+            _rowAxisTransition.selectAll('g').on('click', _chart.yAxisOnClick());
+        }
 
         // Update boxes
         var boxes = _chartBody.selectAll('g.box-group')
