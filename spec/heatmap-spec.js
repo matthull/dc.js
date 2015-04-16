@@ -76,8 +76,8 @@ describe("dc.heatmap", function() {
 
         it('should position the y-axis labels with their associated rows', function() {
             var yaxisTicks = chart.selectAll(".rows.axis .tick");
-            expect(yaxisTicks[0][0].getAttribute("transform")).toEqual("translate(0,150)");
-            expect(yaxisTicks[0][1].getAttribute("transform")).toEqual("translate(0,50)");
+            expect(yaxisTicks[0][0].getAttribute("transform")).toMatchTranslate(0, 150);
+            expect(yaxisTicks[0][1].getAttribute("transform")).toMatchTranslate(0, 50);
         });
 
         it('should have labels on the y-axis corresponding to the row values', function() {
@@ -88,8 +88,8 @@ describe("dc.heatmap", function() {
 
         it('should position the x-axis labels with their associated columns', function() {
             var xaxisTexts = chart.selectAll(".cols.axis .tick");
-            expect(xaxisTexts[0][0].getAttribute("transform")).toEqual("translate(50,0)");
-            expect(xaxisTexts[0][1].getAttribute("transform")).toEqual("translate(150,0)");
+            expect(xaxisTexts[0][0].getAttribute("transform")).toMatchTranslate(50, 0);
+            expect(xaxisTexts[0][1].getAttribute("transform")).toMatchTranslate(150, 0);
         });
 
         it('should have labels on the x-axis corresponding to the row values', function() {
